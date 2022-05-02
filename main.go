@@ -2,12 +2,15 @@ package main
 
 import (
 	"database/sql"
-	"os"
 	"log"
+	"os"
 	"fmt"
 	"github.com/go-sql-driver/mysql"
 )
 
+// In production declaring a variable like this for database
+// access should be avoided. Placing this in a struct is better.
+// This is just for practice.
 var db *sql.DB
 
 func main() {
@@ -29,10 +32,17 @@ func main() {
 		log.Fatal(err)
 	}
 
+
+	// Call db.Ping() to confirm that connection to the database works. At 
+	// run time, sql.Open() might not immediately connect depending on the
+	// driver. I am using Ping() here to confirm that the database/sql 
+	// package can connect when it needs to.
 	pingErr := db.Ping()
+	// Check for errors from Ping() incase it fails.
 	if pingErr != nil {
 		log.Fatal(pingErr)
 	}
 
+	// Print a message if Ping() connected succesfully.
 	fmt.Println("Connected!")
 }
