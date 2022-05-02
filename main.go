@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"log"
-	"os"
 	"fmt"
-	"github.com/go-sql-driver/mysql"
+	"time"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 // In production declaring a variable like this for database
@@ -17,20 +17,19 @@ func main() {
 	// Capture connection properties. We need to set th e
 	// database log in properties for the application to 
 	// connect to the database.
-	cfg := mysql.Config{
-		User: os.Getenv("data-access-app"),
-		Passwd: os.Getenv("data-access-123"),
-		Net: "tcp",
-		Addr: "127.0.0.1:3306",
-		DBName: "recordings",
-	}
-
+	
 	// Get a database handle.
+		// This bellow is a beter way to connect to the database 
+	// as adviced from the github page of the driver 
 	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
+	db, err = sql.Open("mysql", "data-access-app:data-access-123@/recordings")
 	if err != nil {
 		log.Fatal(err)
 	}
+	// See "Important settings" section.
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
 
 
 	// Call db.Ping() to confirm that connection to the database works. At 
